@@ -1,10 +1,11 @@
 #!/bin/bash
-
+pcap="generic" # replace with pcap name
+echo "Running pcap conversion on $pcap"
 echo "pcap to ipfix"
 # Refer to the documentation for arguments
 # https://tools.netsa.cert.org/yaf/yaf.html
 yaf \
---in /files/tor.pcap --out /files/pcap2ipfix.yaf \
+--in /files/$pcap.pcap --out /files/pcap2ipfix.yaf \
 --entropy \
 --log /files/pcap2ipfix.log --verbose
 echo
@@ -13,7 +14,7 @@ echo "pcap to ipfix with app labeling"
 # Refer to the documentation for arguments
 # https://tools.netsa.cert.org/yaf/yaf.html
 yaf \
---in /files/tor.pcap --out /files/pcap2ipfix-applabel.yaf \
+--in /files/$pcap.pcap --out /files/pcap2ipfix-applabel.yaf \
 --applabel --max-payload=2048 \
 --entropy \
 --log /files/pcap2ipfix-applabel.log --verbose
@@ -24,7 +25,7 @@ echo "pcap to ipfix with app labeling and deep packet inspection"
 # https://tools.netsa.cert.org/yaf/yaf.html
 # https://tools.netsa.cert.org/yaf/yafdpi.html
 yaf \
---in /files/tor.pcap --out /files/pcap2ipfix-applabel-dpi.yaf \
+--in /files/$pcap.pcap --out /files/pcap2ipfix-applabel-dpi.yaf \
 --applabel --max-payload=2048 \
 --plugin-name=/usr/local/lib/yaf/dpacketplugin.la \
 --plugin-conf=/files/config/yafDPIRules.conf \
@@ -37,7 +38,7 @@ echo "pcap to ipfix with app labeling to ascii using yafscii"
 # https://tools.netsa.cert.org/yaf/yaf.html
 # https://tools.netsa.cert.org/yaf/yafscii.html
 yaf \
---in /files/tor.pcap \
+--in /files/$pcap.pcap \
 --applabel --max-payload=2048 \
 --entropy \
 | \
@@ -53,7 +54,7 @@ echo "pcap to ipfix with app labeling and deep packet inspection to ascii using 
 # https://tools.netsa.cert.org/yaf/yafdpi.html
 # https://tools.netsa.cert.org/super_mediator/super_mediator.html
 yaf \
---in /files/tor.pcap \
+--in /files/$pcap.pcap \
 --applabel --max-payload=2048 \
 --plugin-name=/usr/local/lib/yaf/dpacketplugin.la \
 --flow-stats \
@@ -71,7 +72,7 @@ echo "pcap to ipfix to silk using rwipfix2silk"
 # https://tools.netsa.cert.org/yaf/yaf.html
 # https://tools.netsa.cert.org/silk/rwipfix2silk.html
 yaf \
---in /files/tor.pcap \
+--in /files/$pcap.pcap \
 --applabel --max-payload=2048 \
 --silk \
 | \
@@ -81,4 +82,4 @@ rwipfix2silk \
 --log-destination /files/pcap2ipfix-applabel-silk.log --log-flags=all
 echo
 echo "Converting PSV to CSV"
-python convert.py pcap2ipfix-applabel-yafscii.psv pcap2ipfix-applabel-yafscii.csv
+python3 /files/convert.py pcap2ipfix-applabel-yafscii.psv pcap2ipfix-applabel-yafscii.csv

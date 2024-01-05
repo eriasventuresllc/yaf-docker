@@ -18,6 +18,7 @@ RUN apt-get install -y \
         libpcap-dev \
         python-dev \
         iputils-ping \
+        python3 \
         dos2unix
 
 #RUN apt-get clean && \
@@ -62,6 +63,8 @@ RUN apt-get install -y dos2unix
 VOLUME ["/files"]
 
 COPY run.sh /run.sh
+COPY files/convert.py /files/convert.py
 RUN chmod 0755 /run.sh
+RUN chmod 0755 /files/convert.py
 RUN dos2unix /run.sh
 ENTRYPOINT ["/run.sh"]

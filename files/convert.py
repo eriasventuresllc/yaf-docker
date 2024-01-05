@@ -2,12 +2,13 @@ import csv
 import sys
 
 def psv_to_csv(psv_file, csv_file):
-    with open(psv_file, 'r') as psv_input:
+    prefix = '/files/'
+    with open(prefix + psv_file, 'r') as psv_input:
         # Read the PSV file using the '|' delimiter
         psv_reader = csv.reader(psv_input, delimiter='|')
 
         # Write to the CSV file using the ',' delimiter
-        with open(csv_file, 'w', newline='') as csv_output:
+        with open(prefix + csv_file, 'w', newline='') as csv_output:
             csv_writer = csv.writer(csv_output)
 
             # Write each row from PSV to CSV
@@ -15,7 +16,7 @@ def psv_to_csv(psv_file, csv_file):
                 stripped_row = [col.strip() for col in row]
                 csv_writer.writerow(stripped_row)
 
-    print(f'Conversion complete. CSV file saved as {csv_file}')
+    print('Conversion complete')
 
 
 if __name__ == "__main__":
