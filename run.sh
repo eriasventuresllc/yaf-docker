@@ -15,7 +15,7 @@ echo "pcap to ipfix with app labeling"
 yaf \
 --in /files/tor.pcap --out /files/pcap2ipfix-applabel.yaf \
 --applabel --max-payload=2048 \
-#--entropy \
+--entropy \
 --log /files/pcap2ipfix-applabel.log --verbose
 echo
 
@@ -28,7 +28,7 @@ yaf \
 --applabel --max-payload=2048 \
 --plugin-name=/usr/local/lib/yaf/dpacketplugin.la \
 --plugin-conf=/files/config/yafDPIRules.conf \
-#--entropy \
+--entropy \
 --log /files/pcap2ipfix-applabel-dpi.log --verbose
 echo
 
@@ -39,8 +39,8 @@ echo "pcap to ipfix with app labeling to ascii using yafscii"
 yaf \
 --in /files/tor.pcap \
 --applabel --max-payload=2048 \
-#--entropy \
-#| \
+--entropy \
+| \
 yafscii \
 --out /files/pcap2ipfix-applabel-yafscii.psv \
 --tabular --print-header \
@@ -57,7 +57,7 @@ yaf \
 --applabel --max-payload=2048 \
 --plugin-name=/usr/local/lib/yaf/dpacketplugin.la \
 --flow-stats \
-#--entropy \
+--entropy \
 | \
 super_mediator \
 -c /files/dpi_multi_file_extra_fields.conf \
@@ -80,3 +80,5 @@ rwipfix2silk \
 --interface-values=vlan \
 --log-destination /files/pcap2ipfix-applabel-silk.log --log-flags=all
 echo
+echo "Converting PSV to CSV"
+python convert.py pcap2ipfix-applabel-yafscii.psv pcap2ipfix-applabel-yafscii.csv
