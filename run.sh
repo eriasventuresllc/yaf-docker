@@ -1,5 +1,5 @@
 #!/bin/bash
-pcap="generic" # replace with pcap name
+pcap="sample2" # replace with pcap name
 echo "Running pcap conversion on $pcap"
 echo "pcap to ipfix"
 # Refer to the documentation for arguments

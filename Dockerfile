@@ -63,7 +63,9 @@ RUN apt-get install -y dos2unix
 VOLUME ["/files"]
 
 COPY run.sh /run.sh
-COPY files/convert.py /files/convert.py
+COPY files/* /files/
+RUN mkdir /files/dpi
+COPY files/dpi_multi_file_extra_fields.conf /files/dpi_multi_file_extra_fields.conf
 RUN chmod 0755 /run.sh
 RUN chmod 0755 /files/convert.py
 RUN dos2unix /run.sh
