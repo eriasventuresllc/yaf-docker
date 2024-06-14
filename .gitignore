@@ -1,6 +1,6 @@
 files/*.pcap
 files/pcap2*
 .idea/
+Kamron_Intership/.ipynb_checkpoints/
 Kamron_Intership/.ipynb_checkpoints/pcap-charts-checkpoint.ipynb
-Kamron_Intership/pcap-charts.ipynb
-Kamron_Intership/pcap2ipfix-applabel-yafscii.csv
+Kamron_Intership/.ipynb_checkpoints/pcap2ipfix-applabel-yafscii-checkpoint.csv
