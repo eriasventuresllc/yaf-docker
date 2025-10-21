@@ -1,0 +1,48 @@
+[2025-10-21 14:10:08] yaf starting
+[2025-10-21 14:10:08] Reading packets from /files/test.pcap
+[2025-10-21 14:10:08] YAF statistics: Flows: 774 Packets: 208818 Dropped: 0 Ignored: 8269 Out of Sequence: 1 Expired Frags: 0 Assembled Frags: 0
+[2025-10-21 14:10:08] Sent Tombstone record: observationDomain:0, exporterId:0:7, tombstoneId: 0
+[2025-10-21 14:10:08] Processed 208818 packets into 774 flows:
+[2025-10-21 14:10:08]   Mean flow rate 20637.25/s.
+[2025-10-21 14:10:08]   Mean packet rate 5567737.63/s.
+[2025-10-21 14:10:08]   Virtual bandwidth 8966.9693 Mbps.
+[2025-10-21 14:10:08]   Maximum flow table size 729.
+[2025-10-21 14:10:08]   26 flush events.
+[2025-10-21 14:10:08] Rejected 1 out-of-sequence packets.
+[2025-10-21 14:10:08]   623 asymmetric/unidirectional flows detected (80.49%)
+[2025-10-21 14:10:08] YAF read 217087 total packets
+[2025-10-21 14:10:08] Assembled 0 fragments into 0 packets:
+[2025-10-21 14:10:08]   Expired 0 incomplete fragmented packets. (0.00%)
+[2025-10-21 14:10:08]   Maximum fragment table size 0.
+[2025-10-21 14:10:08] Rejected 8269 packets during decode: (3.81%)
+[2025-10-21 14:10:08]   8269 due to unsupported/rejected packet type: (3.81%)
+[2025-10-21 14:10:08]       82 unsupported/rejected Layer 3 headers. (0.04%)
+[2025-10-21 14:10:08]       6511 ARP packets. (3.00%)
+[2025-10-21 14:10:08]       202 LLDP packets. (0.09%)
+[2025-10-21 14:10:08]       1474 802.3 packets. (0.68%)
+[2025-10-21 14:10:08] yaf Exported 1 stats records.
+[2025-10-21 14:10:08] yaf terminating
+[2025-10-21 14:20:21] yaf starting
+[2025-10-21 14:20:21] Reading packets from /files/test.pcap
+[2025-10-21 14:20:21] YAF statistics: Flows: 774 Packets: 208818 Dropped: 0 Ignored: 8269 Out of Sequence: 1 Expired Frags: 0 Assembled Frags: 0
+[2025-10-21 14:20:21] Sent Tombstone record: observationDomain:0, exporterId:0:7, tombstoneId: 0
+[2025-10-21 14:20:21] Processed 208818 packets into 774 flows:
+[2025-10-21 14:20:21]   Mean flow rate 21711.69/s.
+[2025-10-21 14:20:21]   Mean packet rate 5857611.71/s.
+[2025-10-21 14:20:21]   Virtual bandwidth 9433.8182 Mbps.
+[2025-10-21 14:20:21]   Maximum flow table size 729.
+[2025-10-21 14:20:21]   26 flush events.
+[2025-10-21 14:20:21] Rejected 1 out-of-sequence packets.
+[2025-10-21 14:20:21]   623 asymmetric/unidirectional flows detected (80.49%)
+[2025-10-21 14:20:21] YAF read 217087 total packets
+[2025-10-21 14:20:21] Assembled 0 fragments into 0 packets:
+[2025-10-21 14:20:21]   Expired 0 incomplete fragmented packets. (0.00%)
+[2025-10-21 14:20:21]   Maximum fragment table size 0.
+[2025-10-21 14:20:21] Rejected 8269 packets during decode: (3.81%)
+[2025-10-21 14:20:21]   8269 due to unsupported/rejected packet type: (3.81%)
+[2025-10-21 14:20:21]       82 unsupported/rejected Layer 3 headers. (0.04%)
+[2025-10-21 14:20:21]       6511 ARP packets. (3.00%)
+[2025-10-21 14:20:21]       202 LLDP packets. (0.09%)
+[2025-10-21 14:20:21]       1474 802.3 packets. (0.68%)
+[2025-10-21 14:20:21] yaf Exported 1 stats records.
+[2025-10-21 14:20:21] yaf terminating

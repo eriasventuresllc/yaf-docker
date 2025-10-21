@@ -26,6 +26,7 @@ echo "pcap to ipfix"
 # https://tools.netsa.cert.org/yaf/yaf.html
 yaf \
 --in "$input" --out /files/pcap2ipfix.yaf \
+--max-payload=16384 \
 --entropy \
 --log /files/pcap2ipfix.log ${YAF_VERBOSE:+--verbose}
 echo
@@ -35,7 +36,7 @@ echo "pcap to ipfix with app labeling"
 # https://tools.netsa.cert.org/yaf/yaf.html
 yaf \
 --in "$input" --out /files/pcap2ipfix-applabel.yaf \
---applabel --max-payload=2048 \
+--applabel --max-payload=16384 \
 --entropy \
 --log /files/pcap2ipfix-applabel.log ${YAF_VERBOSE:+--verbose}
 echo
@@ -53,7 +54,7 @@ fi
 
 yaf \
 --in "$input" --out /files/pcap2ipfix-applabel-dpi.yaf \
---applabel --max-payload=2048 \
+--applabel --max-payload=16384 \
 --plugin-name=/usr/local/lib/yaf/dpacketplugin.la \
 $plugin_conf_arg \
 --entropy \
@@ -66,7 +67,7 @@ echo "pcap to ipfix with app labeling to ascii using yafscii"
 # https://tools.netsa.cert.org/yaf/yafscii.html
 yaf \
 --in "$input" \
---applabel --max-payload=2048 \
+--applabel --max-payload=16384 \
 --entropy \
 | \
 yafscii \
@@ -91,11 +92,11 @@ if [ -f /files/dpi_multi_file_extra_fields.conf ]; then
     config_path="/files/dpi_multi_file_extra_fields.conf"
 fi
 echo "Using super_mediator config: $config_path"
-echo "Showing first 30 lines of config:"
-nl -ba "$config_path" | sed -n '1,30p' || true
+# echo "Showing first 30 lines of config:"
+# nl -ba "$config_path" | sed -n '1,30p' || true
 yaf \
 --in "$input" \
---applabel --max-payload=2048 \
+--applabel --max-payload=16384 \
 --plugin-name=/usr/local/lib/yaf/dpacketplugin.la \
 $plugin_conf_arg \
 --flow-stats \
@@ -112,7 +113,7 @@ echo "pcap to ipfix to silk using rwipfix2silk"
 # https://tools.netsa.cert.org/silk/rwipfix2silk.html
 yaf \
 --in "$input" \
---applabel --max-payload=2048 \
+--applabel --max-payload=16384 \
 --silk \
 | \
 rwipfix2silk \
@@ -131,10 +132,33 @@ if [ -f /files/dpi/sslcerts.txt ]; then
     python3 /opt/yaf/convert.py dpi/sslcerts.txt sslcerts.csv
 fi
 echo
-echo "Converting DPI TEXT files to CSV with headers"
+# Extract JA3/JA3S entries from TLS output if present (with header)
+echo "Extracting JA3/JA3S from TLS output (if present)"
+if ls /files/dpi/tls.txt* >/dev/null 2>&1; then
+    ja3_src="$(ls -1 /files/dpi/tls.txt* 2>/dev/null | head -n1)"
+    if [ -n "$ja3_src" ]; then
+        printf "flow_id|stime_ms|sub|tls_id|issuer_subject|f1|value\n" > /files/dpi/ja3.txt
+        awk -F '|' '($4==463 || $4==464 || $4==465 || $4==466) { print }' "$ja3_src" >> /files/dpi/ja3.txt || true
+        if [ -s /files/dpi/ja3.txt ]; then
+            echo "JA3/JA3S lines written to /files/dpi/ja3.txt; converting to CSV"
+            python3 /opt/yaf/convert.py dpi || true
+            # If conversion succeeded, remove the txt artifact to keep CSV-only
+            if [ -f /files/dpi/ja3.csv ]; then
+                rm -f /files/dpi/ja3.txt || true
+            fi
+        else
+            rm -f /files/dpi/ja3.txt || true
+            echo "No JA3 IE (463-466) lines found in $ja3_src"
+        fi
+    fi
+else
+    echo "No TLS output found at /files/dpi/tls.txt*"
+fi
+echo
+echo "Converting DPI TEXT files to CSV with headers and enhanced labels"
 python3 /opt/yaf/convert.py dpi || true
 
-echo
+#
 # Optional cleanup of generated outputs after the run when CLEAN_OUTPUTS is set
 if [ -n "${CLEAN_OUTPUTS:-}" ]; then
     echo "CLEAN_OUTPUTS is set; removing generated outputs"

@@ -22,6 +22,15 @@ Outputs are written into the mounted `/files` directory:
 - dpi/* exported by super_mediator (per protocol, with headers)
 - pcap2ipfix-applabel-silk.rw
 
+Enhanced CSVs under `dpi/` now include label columns and cleanup:
+
+- `flow.csv`: adds `protocol_name` (e.g., TCP/UDP/ICMP)
+- `http.csv`: adds `http_field` for `http_id` (e.g., server, user_agent, status)
+- `dns.csv`: adds `rr_type_name` for numeric `rr_type` (e.g., A, AAAA, CNAME)
+- `tls.csv`: adds `tls_field` for `tls_id` (e.g., ja3_hash, ja3s_hash)
+- JA3 is exported as `ja3.csv` only (with header and `tls_field` label); the temporary `ja3.txt` is removed automatically
+- After conversion, source `.txt0` files are removed automatically
+
 Optional: If you have a DPI rules file, mount it at `/files/config/yafDPIRules.conf` and it will be used automatically.
 
 To enable JA3/HASSH fields, this image builds:

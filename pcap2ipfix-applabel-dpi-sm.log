@@ -1,0 +1,42 @@
+[2025-10-21 14:10:08] super_mediator starting
+[2025-10-21 14:10:08] E1: Exporter Active.
+[2025-10-21 14:10:08] Initialization Successful, starting...
+[2025-10-21 14:10:08] running as root in --live mode, but not dropping privilege
+[2025-10-21 14:10:08] C1: Opening file: -
+[2025-10-21 14:10:08] E1: Opening Text File /files/dpi/flow.txt0
+[2025-10-21 14:10:08] E1: Opening Text File /files/dpi/tls.txt0
+[2025-10-21 14:10:08] E1: Opening Text File /files/dpi/http.txt0
+[2025-10-21 14:10:08] E1: Opening Text File /files/dpi/dns.txt0
+[2025-10-21 14:10:08] C1: YAF ID: 16 IP: 172.17.0.2 Uptime: 0d:0h:0m:0s
+[2025-10-21 14:10:08] C1: YAF Flows: 774 Packets: 208818 Dropped: 0 Ignored: 8269 Out of Sequence: 1 Expired Frags: 0 Assembled Frags: 0
+[2025-10-21 14:10:08] Received Tombstone record: observationDomain:0, exporterId:0:16, tombstoneId: 0
+[2025-10-21 14:10:08] C1: Closing Connection: End of file
+[2025-10-21 14:10:08] INACTIVE Collector C1: 774 flows, 0 other flows, 1 stats, 0 filtered, 0 files
+[2025-10-21 14:10:08] Exporter E1: 0 records, 0 stats
+[2025-10-21 14:10:08] E1: Closing File /files/dpi/dns.txt0
+[2025-10-21 14:10:08] E1: Closing File /files/dpi/http.txt0
+[2025-10-21 14:10:08] E1: Closing File /files/dpi/tls.txt0
+[2025-10-21 14:10:08] E1: Closing File /files/dpi/flow.txt0
+[2025-10-21 14:10:08] SM: Uptime: 0d:0h:0m:0s, Total Flows: 774, Filtered: 0, Stats: 1, DNS: 453, Other: 0, UDP-uniflows: 0
+[2025-10-21 14:10:08] super_mediator Terminating
+[2025-10-21 14:20:21] super_mediator starting
+[2025-10-21 14:20:21] E1: Exporter Active.
+[2025-10-21 14:20:21] Initialization Successful, starting...
+[2025-10-21 14:20:21] running as root in --live mode, but not dropping privilege
+[2025-10-21 14:20:21] C1: Opening file: -
+[2025-10-21 14:20:21] E1: Opening Text File /files/dpi/flow.txt0
+[2025-10-21 14:20:21] E1: Opening Text File /files/dpi/tls.txt0
+[2025-10-21 14:20:21] E1: Opening Text File /files/dpi/http.txt0
+[2025-10-21 14:20:21] E1: Opening Text File /files/dpi/dns.txt0
+[2025-10-21 14:20:21] C1: YAF ID: 16 IP: 172.17.0.2 Uptime: 0d:0h:0m:0s
+[2025-10-21 14:20:21] C1: YAF Flows: 774 Packets: 208818 Dropped: 0 Ignored: 8269 Out of Sequence: 1 Expired Frags: 0 Assembled Frags: 0
+[2025-10-21 14:20:21] Received Tombstone record: observationDomain:0, exporterId:0:16, tombstoneId: 0
+[2025-10-21 14:20:21] C1: Closing Connection: End of file
+[2025-10-21 14:20:21] INACTIVE Collector C1: 774 flows, 0 other flows, 1 stats, 0 filtered, 0 files
+[2025-10-21 14:20:21] Exporter E1: 0 records, 0 stats
+[2025-10-21 14:20:21] E1: Closing File /files/dpi/dns.txt0
+[2025-10-21 14:20:21] E1: Closing File /files/dpi/http.txt0
+[2025-10-21 14:20:21] E1: Closing File /files/dpi/tls.txt0
+[2025-10-21 14:20:21] E1: Closing File /files/dpi/flow.txt0
+[2025-10-21 14:20:21] SM: Uptime: 0d:0h:0m:0s, Total Flows: 774, Filtered: 0, Stats: 1, DNS: 453, Other: 0, UDP-uniflows: 0
+[2025-10-21 14:20:21] super_mediator Terminating

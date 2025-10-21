@@ -1,0 +1,62 @@
+[2025-10-21 14:10:08] yaf starting
+[2025-10-21 14:10:08] Initializing Rules From File: /usr/local/etc/yafApplabelRules.conf
+[2025-10-21 14:10:08] Application Labeler accepted 49 rules.
+[2025-10-21 14:10:08] Application Labeler accepted 0 signatures.
+[2025-10-21 14:10:08] DPI Running for ALL Protocols
+[2025-10-21 14:10:08] Initializing Rules from DPI File /usr/local/etc/yafDPIRules.conf
+[2025-10-21 14:10:08] DPI rule scanner accepted 51 rules from the DPI Rule File
+[2025-10-21 14:10:08] DPI regular expressions cover 5 protocols
+[2025-10-21 14:10:08] Reading packets from /files/test.pcap
+[2025-10-21 14:10:08] YAF statistics: Flows: 774 Packets: 208818 Dropped: 0 Ignored: 8269 Out of Sequence: 1 Expired Frags: 0 Assembled Frags: 0
+[2025-10-21 14:10:08] Sent Tombstone record: observationDomain:0, exporterId:0:9, tombstoneId: 0
+[2025-10-21 14:10:08] Processed 208818 packets into 774 flows:
+[2025-10-21 14:10:08]   Mean flow rate 19365.98/s.
+[2025-10-21 14:10:08]   Mean packet rate 5224760.43/s.
+[2025-10-21 14:10:08]   Virtual bandwidth 8414.5966 Mbps.
+[2025-10-21 14:10:08]   Maximum flow table size 729.
+[2025-10-21 14:10:08]   26 flush events.
+[2025-10-21 14:10:08] Rejected 1 out-of-sequence packets.
+[2025-10-21 14:10:08]   623 asymmetric/unidirectional flows detected (80.49%)
+[2025-10-21 14:10:08] YAF read 217087 total packets
+[2025-10-21 14:10:08] Assembled 0 fragments into 0 packets:
+[2025-10-21 14:10:08]   Expired 0 incomplete fragmented packets. (0.00%)
+[2025-10-21 14:10:08]   Maximum fragment table size 0.
+[2025-10-21 14:10:08] Rejected 8269 packets during decode: (3.81%)
+[2025-10-21 14:10:08]   8269 due to unsupported/rejected packet type: (3.81%)
+[2025-10-21 14:10:08]       82 unsupported/rejected Layer 3 headers. (0.04%)
+[2025-10-21 14:10:08]       6511 ARP packets. (3.00%)
+[2025-10-21 14:10:08]       202 LLDP packets. (0.09%)
+[2025-10-21 14:10:08]       1474 802.3 packets. (0.68%)
+[2025-10-21 14:10:08] yaf Exported 1 stats records.
+[2025-10-21 14:10:08] yaf terminating
+[2025-10-21 14:20:21] yaf starting
+[2025-10-21 14:20:21] Initializing Rules From File: /usr/local/etc/yafApplabelRules.conf
+[2025-10-21 14:20:21] Application Labeler accepted 49 rules.
+[2025-10-21 14:20:21] Application Labeler accepted 0 signatures.
+[2025-10-21 14:20:21] DPI Running for ALL Protocols
+[2025-10-21 14:20:21] Initializing Rules from DPI File /usr/local/etc/yafDPIRules.conf
+[2025-10-21 14:20:21] DPI rule scanner accepted 51 rules from the DPI Rule File
+[2025-10-21 14:20:21] DPI regular expressions cover 5 protocols
+[2025-10-21 14:20:21] Reading packets from /files/test.pcap
+[2025-10-21 14:20:21] YAF statistics: Flows: 774 Packets: 208818 Dropped: 0 Ignored: 8269 Out of Sequence: 1 Expired Frags: 0 Assembled Frags: 0
+[2025-10-21 14:20:21] Sent Tombstone record: observationDomain:0, exporterId:0:9, tombstoneId: 0
+[2025-10-21 14:20:21] Processed 208818 packets into 774 flows:
+[2025-10-21 14:20:21]   Mean flow rate 24304.47/s.
+[2025-10-21 14:20:21]   Mean packet rate 6557118.63/s.
+[2025-10-21 14:20:21]   Virtual bandwidth 10560.3901 Mbps.
+[2025-10-21 14:20:21]   Maximum flow table size 729.
+[2025-10-21 14:20:21]   26 flush events.
+[2025-10-21 14:20:21] Rejected 1 out-of-sequence packets.
+[2025-10-21 14:20:21]   623 asymmetric/unidirectional flows detected (80.49%)
+[2025-10-21 14:20:21] YAF read 217087 total packets
+[2025-10-21 14:20:21] Assembled 0 fragments into 0 packets:
+[2025-10-21 14:20:21]   Expired 0 incomplete fragmented packets. (0.00%)
+[2025-10-21 14:20:21]   Maximum fragment table size 0.
+[2025-10-21 14:20:21] Rejected 8269 packets during decode: (3.81%)
+[2025-10-21 14:20:21]   8269 due to unsupported/rejected packet type: (3.81%)
+[2025-10-21 14:20:21]       82 unsupported/rejected Layer 3 headers. (0.04%)
+[2025-10-21 14:20:21]       6511 ARP packets. (3.00%)
+[2025-10-21 14:20:21]       202 LLDP packets. (0.09%)
+[2025-10-21 14:20:21]       1474 802.3 packets. (0.68%)
+[2025-10-21 14:20:21] yaf Exported 1 stats records.
+[2025-10-21 14:20:21] yaf terminating
