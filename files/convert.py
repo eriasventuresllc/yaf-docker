@@ -2,6 +2,7 @@ import csv
 import glob
 import os
 import sys
+from datetime import datetime, timezone
 from typing import Callable, List, Optional
 
 def psv_to_csv(psv_file: str, csv_file: str) -> None:
@@ -76,6 +77,17 @@ def _write_with_header_and_extra(
             # Skip header-like lines if present (flow_id should be numeric)
             if not row[0] or not row[0].isdigit():
                 continue
+
+            # Convert stime_ms (index 1) from epoch milliseconds to ISO 8601 UTC
+            if len(row) > 1 and row[1]:
+                try:
+                    ms_int = int(row[1])
+                    dt = datetime.fromtimestamp(ms_int / 1000.0, tz=timezone.utc)
+                    # Keep milliseconds precision and Z suffix
+                    row[1] = dt.isoformat(timespec='milliseconds').replace('+00:00', 'Z')
+                except ValueError:
+                    # leave as-is if non-numeric
+                    pass
 
             extra = compute_extra_fn(row)
             writer.writerow(row + extra)
@@ -341,7 +353,196 @@ def convert_dpi_txt_to_csv(dpi_dir: str = '/files/dpi') -> None:
         except OSError:
             pass
 
+    # Post-process: deduplicate JA3 and create joined flows view
+    try:
+        dedup_ja3_csv(dpi_dir)
+    except Exception:
+        # non-fatal
+        pass
+    try:
+        create_flows_joined_csv(dpi_dir)
+    except Exception:
+        # non-fatal
+        pass
     print('DPI TXT to CSV conversion complete')
+
+
+def _dedup_csv_inplace(csv_path: str, key_fields: Optional[List[str]] = None) -> None:
+    """Deduplicate a CSV file in place.
+
+    If key_fields is provided, rows are considered duplicates when all key field
+    values match. Otherwise, rows are considered duplicates when all field
+    values match (full-row dedup).
+    """
+    if not os.path.exists(csv_path) or os.path.getsize(csv_path) == 0:
+        return
+
+    temp_path = csv_path + '.tmp'
+    with open(csv_path, 'r', newline='') as src:
+        reader = csv.DictReader(src)
+        fieldnames = reader.fieldnames or []
+        if not fieldnames:
+            return
+        # Validate provided keys against header
+        keys = key_fields if key_fields else fieldnames
+        for k in keys:
+            if k not in fieldnames:
+                # Fall back to full-row dedup if a key is missing
+                keys = fieldnames
+                break
+
+        seen = set()
+        rows: List[dict] = []
+        for row in reader:
+            key = tuple((k, row.get(k, '')) for k in keys)
+            if key in seen:
+                continue
+            seen.add(key)
+            rows.append(row)
+
+    with open(temp_path, 'w', newline='') as dst:
+        writer = csv.DictWriter(dst, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+    try:
+        os.replace(temp_path, csv_path)
+    except OSError:
+        # Best-effort cleanup on platforms without atomic replace
+        try:
+            os.remove(temp_path)
+        except OSError:
+            pass
+
+
+def dedup_ja3_csv(dpi_dir: str = '/files/dpi') -> None:
+    """Deduplicate JA3 CSV to remove repeated entries.
+
+    Prefers uniqueness by (flow_id, tls_field, value) when available.
+    Falls back to full-row dedup if headers differ.
+    """
+    ja3_csv = os.path.join(dpi_dir, 'ja3.csv')
+    if not os.path.exists(ja3_csv) or os.path.getsize(ja3_csv) == 0:
+        return
+
+    # Try to dedup on specific keys; otherwise full-row
+    _dedup_csv_inplace(ja3_csv, key_fields=['flow_id', 'tls_field', 'value'])
+
+
+def create_flows_joined_csv(dpi_dir: str = '/files/dpi', output_name: str = 'flows_joined.csv') -> None:
+    """Create a long-form CSV joining flow metadata with all DPI rules.
+
+    Output schema:
+      flow_id, stime_ms, src_ip, dst_ip, protocol_name, src_port, dst_port,
+      application, vlan, dpi_table, field, value
+
+    Sources:
+      - flow.csv (metadata)
+      - dns.csv (field: rr_type_name; value: value or name)
+      - http.csv (field: http_field; value)
+      - tls.csv (field: tls_field; value) [excluding JA3* entries]
+      - ja3.csv (field: tls_field; value) [deduped]
+    """
+    os.makedirs(dpi_dir, exist_ok=True)
+    flow_csv = os.path.join(dpi_dir, 'flow.csv')
+    dns_csv = os.path.join(dpi_dir, 'dns.csv')
+    http_csv = os.path.join(dpi_dir, 'http.csv')
+    tls_csv = os.path.join(dpi_dir, 'tls.csv')
+    ja3_csv = os.path.join(dpi_dir, 'ja3.csv')
+    out_csv = os.path.join(dpi_dir, output_name)
+
+    # Load flow metadata
+    flow_meta: dict = {}
+    flow_fields = ['stime_ms', 'src_ip', 'dst_ip', 'protocol_name', 'src_port', 'dst_port', 'application', 'vlan']
+    if os.path.exists(flow_csv) and os.path.getsize(flow_csv) > 0:
+        with open(flow_csv, 'r', newline='') as f:
+            r = csv.DictReader(f)
+            for row in r:
+                fid = row.get('flow_id')
+                if not fid:
+                    continue
+                flow_meta[fid] = {k: row.get(k, '') for k in flow_fields}
+
+    def _emit_rows_from_file(path: str, dpi_table: str):
+        if not os.path.exists(path) or os.path.getsize(path) == 0:
+            return []
+        with open(path, 'r', newline='') as f:
+            r = csv.DictReader(f)
+            rows = []
+            for row in r:
+                fid = row.get('flow_id', '')
+                stime = row.get('stime_ms', '')
+                # Determine field/value per table
+                if dpi_table == 'dns':
+                    field = row.get('rr_type_name', '') or row.get('rr_type', '')
+                    value = row.get('value', '') or row.get('name', '')
+                elif dpi_table == 'http':
+                    field = row.get('http_field', '') or row.get('http_id', '')
+                    value = row.get('value', '')
+                else:  # tls or ja3
+                    field = row.get('tls_field', '') or row.get('tls_id', '')
+                    value = row.get('value', '')
+
+                # Pull flow metadata if available
+                meta = flow_meta.get(fid, {})
+                rows.append({
+                    'flow_id': fid,
+                    'stime_ms': stime,
+                    'src_ip': meta.get('src_ip', ''),
+                    'dst_ip': meta.get('dst_ip', ''),
+                    'protocol_name': meta.get('protocol_name', ''),
+                    'src_port': meta.get('src_port', ''),
+                    'dst_port': meta.get('dst_port', ''),
+                    'application': meta.get('application', ''),
+                    'vlan': meta.get('vlan', ''),
+                    'dpi_table': dpi_table,
+                    'field': field,
+                    'value': value,
+                })
+            return rows
+
+    joined_rows: List[dict] = []
+
+    # DNS
+    joined_rows.extend(_emit_rows_from_file(dns_csv, 'dns'))
+
+    # HTTP
+    joined_rows.extend(_emit_rows_from_file(http_csv, 'http'))
+
+    # TLS (exclude JA3* entries which will be taken from ja3.csv)
+    if os.path.exists(tls_csv) and os.path.getsize(tls_csv) > 0:
+        with open(tls_csv, 'r', newline='') as f:
+            r = csv.DictReader(f)
+            filtered_path = tls_csv + '.nofp'
+            with open(filtered_path, 'w', newline='') as tmp:
+                w = None
+                for row in r:
+                    tls_field = row.get('tls_field', '')
+                    if tls_field in ('ja3_hash', 'ja3_params', 'ja3s_hash', 'ja3s_params'):
+                        continue
+                    if w is None:
+                        w = csv.DictWriter(tmp, fieldnames=r.fieldnames)
+                        w.writeheader()
+                    w.writerow(row)
+            joined_rows.extend(_emit_rows_from_file(filtered_path, 'tls'))
+            try:
+                os.remove(filtered_path)
+            except OSError:
+                pass
+
+    # JA3 (after dedup)
+    joined_rows.extend(_emit_rows_from_file(ja3_csv, 'ja3'))
+
+    # Write output
+    headers = [
+        'flow_id', 'stime_ms', 'src_ip', 'dst_ip', 'protocol_name', 'src_port',
+        'dst_port', 'application', 'vlan', 'dpi_table', 'field', 'value',
+    ]
+    with open(out_csv, 'w', newline='') as out:
+        w = csv.DictWriter(out, fieldnames=headers)
+        w.writeheader()
+        for row in joined_rows:
+            w.writerow(row)
 
 
 if __name__ == "__main__":

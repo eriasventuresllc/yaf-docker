@@ -30,6 +30,7 @@ Enhanced CSVs under `dpi/` now include label columns and cleanup:
 - `tls.csv`: adds `tls_field` for `tls_id` (e.g., ja3_hash, ja3s_hash)
 - JA3 is exported as `ja3.csv` only (with header and `tls_field` label); the temporary `ja3.txt` is removed automatically
 - After conversion, source `.txt0` files are removed automatically
+ - All `stime_ms` fields are converted to ISO 8601 UTC timestamps in CSV output (e.g., `2021-09-10T12:15:00.123Z`).
 
 Optional: If you have a DPI rules file, mount it at `/files/config/yafDPIRules.conf` and it will be used automatically.
 
