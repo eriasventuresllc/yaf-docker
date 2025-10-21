@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  echo "Usage: $(basename "$0") [-B|--rebuild] [-i IMAGE|--image IMAGE] [--clean] /absolute/path/to/file.pcap" >&2
+}
+
+IMAGE_NAME=${YAF_IMAGE:-yaf-super_mediator-silk}
+FORCE_BUILD=0
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+
+args=()
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -B|--rebuild)
+      FORCE_BUILD=1
+      shift
+      ;;
+    -i|--image)
+      if [[ $# -lt 2 ]]; then
+        echo "Missing value for $1" >&2
+        usage
+        exit 2
+      fi
+      IMAGE_NAME="$2"
+      shift 2
+      ;;
+    --clean)
+      CLEAN_OUTPUTS=1
+      shift
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    -*)
+      echo "Unknown option: $1" >&2
+      usage
+      exit 2
+      ;;
+    *)
+      args+=("$1")
+      shift
+      ;;
+  esac
+done
+
+if [[ ${#args[@]} -ne 1 ]]; then
+  usage
+  exit 2
+fi
+
+PCAP_PATH_HOST="${args[0]}"
+
+if [[ ! -f "$PCAP_PATH_HOST" ]]; then
+  echo "PCAP file not found: $PCAP_PATH_HOST" >&2
+  exit 2
+fi
+
+# Resolve absolute directory and filename without relying on realpath
+PCAP_DIR_HOST=$(cd "$(dirname "$PCAP_PATH_HOST")" && pwd)
+PCAP_FILE=$(basename "$PCAP_PATH_HOST")
+
+if [[ $FORCE_BUILD -eq 1 ]] || ! docker image inspect "$IMAGE_NAME" >/dev/null 2>&1; then
+  echo "Building image: $IMAGE_NAME"
+  docker build -t "$IMAGE_NAME" .
+fi
+
+echo "Running conversion for: $PCAP_PATH_HOST"
+# If a local config exists in repo, mount it over the baked config to avoid stale versions
+CONFIG_MOUNT=( )
+if [[ -f "$SCRIPT_DIR/files/dpi_multi_file_extra_fields.conf" ]]; then
+  CONFIG_MOUNT=( -v "$SCRIPT_DIR/files/dpi_multi_file_extra_fields.conf:/opt/yaf/dpi_multi_file_extra_fields.conf:ro" )
+fi
+
+docker run --rm -t \
+  -v "$PCAP_DIR_HOST:/files" \
+  -e PCAP_PATH="/files/$PCAP_FILE" \
+  -e YAF_VERBOSE=1 \
+  ${CLEAN_OUTPUTS:+-e CLEAN_OUTPUTS=1} \
+  "${CONFIG_MOUNT[@]}" \
+  "$IMAGE_NAME"
+
+
